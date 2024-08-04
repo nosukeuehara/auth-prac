@@ -1,6 +1,7 @@
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { pages } from "next/dist/build/templates/app-page";
 
 type User = {
   id: number;
@@ -8,7 +9,10 @@ type User = {
   name: string | null;
 };
 
+export const prisma = new PrismaClient();
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       credentials: {
@@ -17,6 +21,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         // userをデータベースから取得するためのロジック書く
+        if (credentials.name !== "nosuke") {
+          throw new Error(" user not found ");
+        }
+        return {
+          name: "nosuke",
+        };
       },
     }),
   ],
