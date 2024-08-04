@@ -1,9 +1,16 @@
-import SignUp from "@/components/login";
+import Login from "@/components/login";
 
-export default function Home() {
+export type User = {
+  email: string,
+  name: string
+}
+
+export default async function Home() {
   return (
     <div className=" flex justify-center items-center align-middle h-14">
-      <SignUp />
+      <form>
+        <Login />
+      </form>
     </div>
   );
 }
