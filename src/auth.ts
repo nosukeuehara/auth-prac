@@ -1,33 +1,31 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Github from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
-type User = {
-  id: number;
-  email: string;
-  name: string | null;
-};
-
-export const prisma = new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   providers: [
+    Google,
+    Github,
     Credentials({
       credentials: {
-        name: { label: "name", type: "text" },
+        email: { label: "email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        // userをデータベースから取得するためのロジック書く
-        if (credentials.name !== "nosuke") {
+        if (!credentials?.email || !credentials.password) {
+          return null;
+        }
+        // データベースからデータを取得して比較するロジックが必要
+        if (credentials.email !== "test") {
           throw new Error(" user not found ");
         }
         return {
-          name: "nosuke",
+          name: "test",
+          email: "test"
         };
       },
     }),
-  ],
+  ]
 });
