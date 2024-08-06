@@ -3,7 +3,6 @@ import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google,
@@ -18,14 +17,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
         // データベースからデータを取得して比較するロジックが必要
-        if (credentials.email !== "test") {
+        if (credentials.email !== "test@nosuke.com") {
           throw new Error(" user not found ");
         }
         return {
-          name: "test",
-          email: "test"
+          name: "nosukeクレデンシャル",
+          email: "test@nosuke.com"
         };
       },
     }),
-  ]
+  ],
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      // 認証後にリダイレクトしたいURLを指定します
+      return baseUrl + '/';
+    },
+  },
 });

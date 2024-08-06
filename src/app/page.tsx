@@ -10,7 +10,7 @@ export type User = {
 
 export default function Home() {
   const sesstion = useSession();
-  console.log(sesstion.data?.user);
+  console.log("user", sesstion.data?.user);
   if (sesstion.data?.user?.name) {
     return (
       <div>
