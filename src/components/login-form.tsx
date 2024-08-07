@@ -1,11 +1,16 @@
-// TODO : このカスタムページは改良予定
-import { signIn } from "@/auth"
+
+import { authenticate } from "@/app/lib/actions"
 export function SignIn() {
   return (
     <form
       action={async (formData) => {
         "use server"
-        await signIn("credentials", formData)
+        const rawFormData = {
+          email: formData.get("email")! as string,
+          name: formData.get("name")! as string,
+          password: formData.get("password")! as string,
+        };
+        await authenticate(rawFormData)
       }}
     >
       <label>
