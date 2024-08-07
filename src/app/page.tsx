@@ -1,7 +1,9 @@
 "use client";
 
 import Login from "@/components/login";
+import { SignUp } from "@/components/signup-form";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { signup } from "./lib/actions";
 
 export type User = {
   email: string;
@@ -25,6 +27,30 @@ export default function Home() {
         <Login />
       </form>
       <button onClick={() => signIn()}>sign in</button>
+      <form
+        action={async (formData) => {
+          const rawFormData = {
+            email: formData.get("email")! as string,
+            name: formData.get("name")! as string,
+            password: formData.get("password")! as string,
+          };
+          const res = await signup(rawFormData);
+        }}
+      >
+        <label>
+          Email
+          <input name="email" type="email" />
+        </label>
+        <label>
+          name
+          <input name="name" type="text" />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" />
+        </label>
+        <button type="submit">Sign Up</button>
+      </form>
     </div>
   );
 }
