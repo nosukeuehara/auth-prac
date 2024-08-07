@@ -1,9 +1,9 @@
 "use client";
 
 import Login from "@/components/login";
-import { SignUp } from "@/components/signup-form";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { authenticate, signup } from "./lib/actions";
+import { useRouter } from "next/navigation";
 
 export type User = {
   email: string;
@@ -11,12 +11,13 @@ export type User = {
 };
 
 export default function Home() {
-  const sesstion = useSession();
-  console.log("user", sesstion.data?.user);
-  if (sesstion.data?.user?.name) {
+  const { data: session, update, status } = useSession();
+  const router = useRouter();
+  if (!!session) {
+    console.log(session);
     return (
       <div>
-        <h2>{sesstion.data.user.name}</h2>
+        <h2>{session?.user?.name}</h2>
         <button onClick={() => signOut()}>sign out</button>
       </div>
     );
@@ -42,7 +43,8 @@ export default function Home() {
             name: formData.get("name")! as string,
             password: formData.get("password")! as string,
           };
-          const res = await signup(rawFormData);
+          await signup(rawFormData);
+          router.refresh();
         }}
       >
         <label>
