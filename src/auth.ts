@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import { prisma } from "./prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -17,12 +18,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
         // データベースからデータを取得して比較するロジックが必要
-        if (credentials.email !== "test@nosuke.com") {
+        prisma.$connect()
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email as string }
+        })
+        prisma.$disconnect()
+        if (user === null) {
           throw new Error(" user not found ");
         }
         return {
-          name: "nosukeクレデンシャル",
-          email: "test@nosuke.com"
+          name: user.name,
+          email: user.email
         };
       },
     }),

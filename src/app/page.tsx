@@ -3,7 +3,7 @@
 import Login from "@/components/login";
 import { SignUp } from "@/components/signup-form";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { signup } from "./lib/actions";
+import { authenticate, signup } from "./lib/actions";
 
 export type User = {
   email: string;
@@ -23,10 +23,18 @@ export default function Home() {
   }
   return (
     <div className=" flex justify-center items-center align-middle h-14">
-      <form>
+      <form
+        action={async (formData) => {
+          const rawFormData = {
+            email: formData.get("email")! as string,
+            name: formData.get("name")! as string,
+            password: formData.get("password")! as string,
+          };
+          await authenticate(rawFormData);
+        }}
+      >
         <Login />
       </form>
-      <button onClick={() => signIn()}>sign in</button>
       <form
         action={async (formData) => {
           const rawFormData = {
