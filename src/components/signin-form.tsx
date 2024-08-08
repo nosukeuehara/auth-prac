@@ -36,6 +36,7 @@ import { redirect } from "next/navigation";
 
 import { AuthError } from "next-auth";
 import { providerMap, signIn } from "@/auth";
+import Link from "next/link";
 
 export default async function SignInPage() {
   return (
@@ -68,6 +69,9 @@ export default async function SignInPage() {
           </button>
         </form>
       ))}
+      <div>
+        <Link href={"/signup"}>Have you signed up yet?</Link>
+      </div>
     </div>
   );
 }
