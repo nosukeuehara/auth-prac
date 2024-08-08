@@ -42,6 +42,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return baseUrl + '/';
     },
   },
+  // pages: {
+  //   signIn: '/signin', // カスタムサインインページのパス
+  // },
 });
 
 export const providerMap = providers.map((provider) => {
