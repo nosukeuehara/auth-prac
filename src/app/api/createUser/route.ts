@@ -14,10 +14,14 @@ export async function POST(request: Request, response: Response) {
     });
     return NextResponse.json(
       { message: "success", data: allUser },
-      { status: 201 }
+      { status: 202 }
     );
   } catch (error) {
-    return NextResponse.json({ message: "failed" }, { status: 400 });
+    if (error.code === 'P2002') {
+      throw new Error('Email already exists')
+    } else {
+      throw new Error('An unexpected error occurred')
+    }
   } finally {
     prisma?.$disconnect();
   }
