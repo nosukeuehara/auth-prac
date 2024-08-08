@@ -13,7 +13,7 @@ export interface FormData {
   password: string
 }
 
-export async function authenticate(formData: FormData): Promise<User> {
+export async function signin(formData: FormData): Promise<User> {
   try {
     const isOk = await signIn("credentials", formData)
     const userData: User = { email: formData.email, name: formData.name }
@@ -37,10 +37,10 @@ export async function signup(formData: FormData): Promise<any> {
       },
       body: JSON.stringify({ email: email, name: name, password: password }),
     }).then(async (res) => await res.json())
-    if (res.status === 200) return { data: { email: res.data.email, name: res.data.name }, message: res.message }
+    if (res.status === 202) return { data: { email: res.data.email, name: res.data.name }, message: res.message }
+    return Error("error")
   } catch (error) {
+    console.log(error)
     throw error
-  } finally {
-    return { email: "", name: "" }
   }
 }
