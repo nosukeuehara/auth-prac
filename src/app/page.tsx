@@ -1,65 +1,40 @@
-"use client";
-
-import Login from "@/components/login";
-import { signOut, useSession } from "next-auth/react";
-import { authenticate, signup } from "./lib/actions";
-import { useRouter } from "next/navigation";
+"use server";
+import { auth, signOut, signIn } from "@/auth";
 
 export type User = {
   email: string;
   name: string;
 };
 
-export default function Home() {
-  const { data: session, update, status } = useSession();
-  const router = useRouter();
-  if (!!session) {
-    console.log(session);
+export default async function Home() {
+  const session = await auth();
+  if (session === null)
     return (
       <div>
-        <h2>{session?.user?.name}</h2>
-        <button onClick={() => signOut()}>sign out</button>
+        <form
+          action={async () => {
+            "use server";
+            await signIn();
+          }}
+        >
+          <button>Sign In</button>
+        </form>
       </div>
     );
-  }
   return (
-    <div className=" flex justify-center items-center align-middle h-14">
+    <div>
+      <h1>{`Hello ${session.user?.name}`}</h1>
+      <div>
+        <p>your session data</p>
+        <div>{session.user?.email}</div>
+      </div>
       <form
-        action={async (formData) => {
-          const rawFormData = {
-            email: formData.get("email")! as string,
-            name: formData.get("name")! as string,
-            password: formData.get("password")! as string,
-          };
-          await authenticate(rawFormData);
+        action={async () => {
+          "use server";
+          await signOut();
         }}
       >
-        <Login />
-      </form>
-      <form
-        action={async (formData) => {
-          const rawFormData = {
-            email: formData.get("email")! as string,
-            name: formData.get("name")! as string,
-            password: formData.get("password")! as string,
-          };
-          await signup(rawFormData);
-          router.refresh();
-        }}
-      >
-        <label>
-          Email
-          <input name="email" type="email" />
-        </label>
-        <label>
-          name
-          <input name="name" type="text" />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" />
-        </label>
-        <button type="submit">Sign Up</button>
+        <button>Sign out</button>
       </form>
     </div>
   );
