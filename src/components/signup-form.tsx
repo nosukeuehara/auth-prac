@@ -10,7 +10,7 @@ export function SignUp() {
           name: formData.get("name")! as string,
           password: formData.get("password")! as string,
         };
-        await signup(rawFormData);
+        const res = await signup(rawFormData);
       }}
     >
       <label>
