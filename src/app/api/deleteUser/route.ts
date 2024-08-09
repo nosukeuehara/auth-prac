@@ -5,7 +5,6 @@ export async function DELETE(request: Request, response: Response) {
   try {
     prisma?.$connect();
     const targetUser = await request.json();
-    console.log(targetUser);
     const newUsers = await prisma?.user.delete({
       where: {
         ...targetUser,
