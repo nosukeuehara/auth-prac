@@ -10,7 +10,8 @@ export interface User {
 export interface FormData {
   email: string,
   name: string,
-  password: string
+  password: string,
+  csrfToken?: string
 }
 
 export async function signin(formData: FormData): Promise<User> {

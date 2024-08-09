@@ -1,5 +1,6 @@
 "use server";
-import { auth, signOut, signIn } from "@/auth";
+import { auth, signOut, signIn, providerMap } from "@/auth";
+import { redirect } from "next/navigation";
 
 export type User = {
   email: string;
@@ -14,7 +15,9 @@ export default async function Home() {
         <form
           action={async () => {
             "use server";
-            await signIn();
+            redirect(
+              "http://localhost:3000/signin?callbackUrl=http%3A%2F%2Flocalhost%3A3000%2F"
+            );
           }}
         >
           <button>Sign In</button>

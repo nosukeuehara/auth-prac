@@ -17,7 +17,6 @@ const providers: Provider[] = [
       if (!credentials?.email || !credentials.password) {
         return null;
       }
-      // データベースからデータを取得して比較するロジックが必要
       prisma.$connect()
       const user = await prisma.user.findUnique({
         where: { email: credentials.email as string }
@@ -42,9 +41,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return baseUrl + '/';
     },
   },
-  // pages: {
-  //   signIn: '/signin', // カスタムサインインページのパス
-  // },
+  pages: {
+    signIn: "/signin",
+    error: "/error"
+  },
 });
 
 export const providerMap = providers.map((provider) => {
