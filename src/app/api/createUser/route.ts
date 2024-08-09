@@ -2,6 +2,7 @@ import { prisma } from "@/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 
+
 export async function POST(request: Request, response: Response) {
   const { email, name, password } = await request.json();
   const saltRounds = 10;
