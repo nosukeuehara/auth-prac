@@ -1,6 +1,6 @@
 import { prisma } from "@/prisma";
 import { NextResponse } from "next/server";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export async function POST(request: Request, response: Response) {
   const { email, name, password } = await request.json();
@@ -13,7 +13,7 @@ export async function POST(request: Request, response: Response) {
       data: {
         email,
         name,
-        password: hash
+        password: hash,
       },
     });
     return NextResponse.json(
@@ -21,10 +21,10 @@ export async function POST(request: Request, response: Response) {
       { status: 202 }
     );
   } catch (error) {
-    if (error.code === 'P2002') {
-      throw new Error('Email already exists')
+    if (error.code === "P2002") {
+      throw new Error("Email already exists");
     } else {
-      throw new Error('An unexpected error occurred')
+      throw new Error("An unexpected error occurred");
     }
   } finally {
     prisma?.$disconnect();

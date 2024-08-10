@@ -17,41 +17,41 @@ const providers: Provider[] = [
       if (!credentials?.email || !credentials.password) {
         return null;
       }
-      prisma.$connect()
+      prisma.$connect();
       const user = await prisma.user.findUnique({
-        where: { email: credentials.email as string }
-      })
-      prisma.$disconnect()
+        where: { email: credentials.email as string },
+      });
+      prisma.$disconnect();
       if (user === null) {
         throw new Error(" user not found ");
       }
       return {
         name: user.name,
-        email: user.email
+        email: user.email,
       };
     },
-  })
-]
+  }),
+];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // 認証後にリダイレクトしたいURLを指定します
-      return baseUrl + '/';
+      // 認証後にリダイレクトしたいURLを指定
+      return baseUrl + "/";
     },
   },
   pages: {
     signIn: "/signin",
-    error: "/error"
+    error: "/error",
   },
 });
 
 export const providerMap = providers.map((provider) => {
   if (typeof provider === "function") {
-    const providerData = provider()
-    return { id: providerData.id, name: providerData.name }
+    const providerData = provider();
+    return { id: providerData.id, name: providerData.name };
   } else {
-    return { id: provider.id, name: provider.name }
+    return { id: provider.id, name: provider.name };
   }
-})
+});
