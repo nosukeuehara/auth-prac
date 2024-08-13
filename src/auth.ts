@@ -2,8 +2,8 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import { prisma } from "./prisma";
 import { Provider } from "next-auth/providers";
+import { getUserFormDb } from "./lib/password";
 
 const providers: Provider[] = [
   Google,
@@ -14,21 +14,16 @@ const providers: Provider[] = [
       password: { label: "Password", type: "password" },
     },
     authorize: async (credentials) => {
+      const email = credentials.email as string
+      const password = credentials.password as string
       if (!credentials?.email || !credentials.password) {
         return null;
       }
-      prisma.$connect();
-      const user = await prisma.user.findUnique({
-        where: { email: credentials.email as string },
-      });
-      prisma.$disconnect();
+      const user = await getUserFormDb(email, password)
       if (user === null) {
         throw new Error(" user not found ");
       }
-      return {
-        name: user.name,
-        email: user.email,
-      };
+      return user
     },
   }),
 ];
