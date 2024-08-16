@@ -4,6 +4,7 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import { prisma } from "./prisma";
 import { Provider } from "next-auth/providers";
+import "next-auth/jwt";
 
 const providers: Provider[] = [
   Google,
@@ -35,10 +36,26 @@ const providers: Provider[] = [
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async redirect({ url, baseUrl }) {
       // 認証後にリダイレクトしたいURLを指定
       return baseUrl + "/";
+    },
+    async jwt({ token, account, profile }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.id = account.providerAccountId;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token?.accessToken) {
+        session.accessToken = token.accessToken;
+      }
+      return session;
     },
   },
   pages: {
@@ -55,3 +72,15 @@ export const providerMap = providers.map((provider) => {
     return { id: provider.id, name: provider.name };
   }
 });
+
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+  }
+}
