@@ -43,7 +43,6 @@ export function SignIn() {
                   Password
                   <input name="password" type="password" />
                 </label>
-                <Button>Sign In</Button>
               </form>
               <div>
                 <Link href="/signup">Have you signed up yet?</Link>
