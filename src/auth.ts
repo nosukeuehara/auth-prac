@@ -5,6 +5,10 @@ import Google from "next-auth/providers/google";
 import { Provider } from "next-auth/providers";
 import "next-auth/jwt";
 import { getUserFormDb } from "./lib/password";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "./prisma";
+import { ExtendedUser } from "./next-auth";
+import { UserRole } from "@prisma/client";
 
 const providers: Provider[] = [
   Google,
@@ -39,20 +43,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // 認証後にリダイレクトしたいURLを指定
       return baseUrl + "/";
     },
-    async jwt({ token, account, profile }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.id = account.providerAccountId;
+    async session({ token, session }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
       }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token?.accessToken) {
-        session.accessToken = token.accessToken;
+      if (token.role && session.user) {
+        session.user.role = token.role as UserRole;
       }
       return session;
     },
+    async jwt({ token }) {
+      if (!token.sub) return token;
+      const id = token.sub;
+      console.log("ここここｋれｋろえｋろえｋろえこｒ", token);
+      const existingUser = await prisma.user.findUnique({
+        where: { id },
+      });
+      if (!existingUser) return token;
+      token.role = existingUser.role;
+      return token;
+    },
   },
+  adapter: PrismaAdapter(prisma),
   pages: {
     signIn: "/signin",
     error: "/error",
@@ -71,6 +83,7 @@ export const providerMap = providers.map((provider) => {
 declare module "next-auth" {
   interface Session {
     accessToken?: string;
+    user: ExtendedUser;
   }
 }
 
