@@ -25,6 +25,7 @@ const providers: Provider[] = [
         return null;
       }
       const user = await getUserFormDb(email, password);
+      console.log(user)
       if (user === null) {
         throw new Error(" user not found ");
       }
