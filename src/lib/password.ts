@@ -25,7 +25,5 @@ export async function getUserFormDb(email: string, password: string): Promise<Us
   return {
     name: user.name,
     email: user.email,
-
-
   };
 }
