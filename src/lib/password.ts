@@ -1,7 +1,6 @@
 "use server"
 import { User } from "@/app/lib/actions";
 import { prisma } from "@/prisma";
-import test from "node:test";
 // import bcrypt from "bcrypt";
 const bcrypt = require("bcrypt");
 export async function getUserFormDb(email: string, password: string): Promise<User | null> {
@@ -26,6 +25,5 @@ export async function getUserFormDb(email: string, password: string): Promise<Us
   return {
     name: user.name,
     email: user.email,
-    revert: test
   };
 }
